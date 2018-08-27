@@ -12,11 +12,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.rohit.lpregister.R;
+import com.rohit.lpregister.database.DatabaseHelper;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CandidateProfileActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener {
+
+    private EditText mEditTextFirstName,mEditTextLastName,mEditTextEmail,mEditTextMobile,mEditTextDob;
+
+    private CircleImageView mImageViewCandidateImage;
+
+    private RadioGroup mRadioGroupGender;
+    // RadioButton object Declaration.
+    private RadioButton mRadioButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +47,51 @@ public class CandidateProfileActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        initView(); // initView() method call
+
+        clickListener(); // clickListener(); method call
+
+        initObject(); // initObject method call
     }
+
+
+    /**
+     * clickListener() method definition
+     */
+
+    private void clickListener() {
+
+
+
+    }
+
+    /**
+     * intiView Method definition
+     */
+    private void initView() {
+
+        mEditTextFirstName = findViewById(R.id.edittext_update_first_name);
+        mEditTextLastName = findViewById(R.id.edittext_update_last_name);
+        mEditTextEmail = findViewById(R.id.edittext_update_email);
+        mEditTextMobile = findViewById(R.id.edittext_update_mobile_number);
+        mEditTextDob = findViewById(R.id.edittext_update_date_of_birth);
+
+        mImageViewCandidateImage = findViewById(R.id.update_imageview);
+
+        mRadioGroupGender = findViewById(R.id.radioGroup_update_gender);
+
+
+    }
+
+    public void initObject(){
+
+
+
+    }
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -90,5 +148,10 @@ public class CandidateProfileActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

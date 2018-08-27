@@ -228,8 +228,6 @@
                                 android:text="@string/text_female"/>
                         </RadioGroup>
 
-
-
                     </LinearLayout>
                 </LinearLayout>
         </LinearLayout>
