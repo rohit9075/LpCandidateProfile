@@ -1,11 +1,9 @@
 package com.rohit.lpregister.activity;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,19 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.rohit.lpregister.R;
 import com.rohit.lpregister.database.Constants;
 import com.rohit.lpregister.database.DatabaseHelper;
-import com.rohit.lpregister.model.Candidate;
-
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -70,7 +65,9 @@ public class CandidateProfileActivity extends AppCompatActivity
 
         initObject(); // initObject method call
 
-        getCandidateDataFromDb();
+        getCandidateDataFromDb(getIntent().getStringExtra("email"));
+
+
     }
 
 
@@ -209,6 +206,8 @@ public class CandidateProfileActivity extends AppCompatActivity
             }
             else {
 
+
+                disableEditText();
 //                updateCandidateProfile();
 
             }
@@ -239,9 +238,9 @@ public class CandidateProfileActivity extends AppCompatActivity
 
     }
 
-   public void getCandidateDataFromDb() {
+   public void getCandidateDataFromDb(String email) {
 
-       Cursor cursor = mDatabaseHelper.getCandidateProfile("rohit9075@gmail.com");
+       Cursor cursor = mDatabaseHelper.getCandidateProfile(email);
 
        if (cursor.moveToFirst()) {
            do {
@@ -250,15 +249,24 @@ public class CandidateProfileActivity extends AppCompatActivity
                mEditTextFirstName.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_FIRST_NAME)));
                mEditTextLastName.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_LAST_NAME)));
                mEditTextDob.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_DATE_OF_BIRTH)));
-//               mRadioGroupGender.set(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_DATE_OF_BIRTH)));
+               String gender = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_GENDER));
                mEditTextMobile.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_PHONE)));
 
+               if ("Male".equals(gender)){
+                   mRadioButtonMale.setChecked(true);
+               }else {
+                   mRatioButtonFemale.setChecked(true);
+               }
 
+               byte[] byteArray = cursor.getBlob(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_IMAGE));
+
+               if (byteArray != null) {
+                   Bitmap bp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                   mImageViewCandidateImage.setImageBitmap(bp);
+               }
 
            } while (cursor.moveToNext());
 
        }
    }
-
-
 }

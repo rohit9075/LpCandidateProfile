@@ -105,6 +105,7 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
         if (login){
 
             Intent mIntentLogin = new Intent(LoginActivity.this,CandidateProfileActivity.class);
+            mIntentLogin.putExtra("email", mEditTextEmail.getText().toString().trim());
             startActivity(mIntentLogin);
             finish();
 
