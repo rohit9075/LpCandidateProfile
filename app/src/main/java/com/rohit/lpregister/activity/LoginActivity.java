@@ -103,7 +103,11 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
         boolean login = mDatabaseHelper.checkCandidate(mEditTextEmail.getText().toString().trim(),mEditTextPassword.getText().toString().trim());
 
         if (login){
-            Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
+
+            Intent mIntentLogin = new Intent(LoginActivity.this,CandidateProfileActivity.class);
+            startActivity(mIntentLogin);
+            finish();
+
         }else {
             Toast.makeText(this, "Invalid id and password", Toast.LENGTH_SHORT).show();
         }
