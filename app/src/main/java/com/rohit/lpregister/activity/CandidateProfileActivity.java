@@ -15,9 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.rohit.lpregister.R;
 import com.rohit.lpregister.database.Constants;
@@ -43,6 +45,13 @@ public class CandidateProfileActivity extends AppCompatActivity
 
     private DatabaseHelper mDatabaseHelper;
 
+    private CircleImageView mHeaderImageViewProfileImage;
+
+    private TextView mHeaderTextViewName , mHeaderTextViewEmail;
+
+    NavigationView navigationView;
+    View header;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +65,10 @@ public class CandidateProfileActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        header = navigationView.getHeaderView(0);
         navigationView.setNavigationItemSelectedListener(this);
 
         initView(); // initView() method call
@@ -101,6 +113,11 @@ public class CandidateProfileActivity extends AppCompatActivity
 
         mEditUpdateSwitch = findViewById(R.id.toggle_editCandidate);
 
+        mHeaderImageViewProfileImage = header.findViewById(R.id.header_imageView);
+
+        mHeaderTextViewName = header.findViewById(R.id.header_name);
+        mHeaderTextViewEmail = header.findViewById(R.id.header_email);
+
 
     }
 
@@ -109,9 +126,6 @@ public class CandidateProfileActivity extends AppCompatActivity
       mDatabaseHelper = new DatabaseHelper(this);
 
     }
-
-
-
 
     @Override
     public void onBackPressed() {
@@ -245,9 +259,19 @@ public class CandidateProfileActivity extends AppCompatActivity
        if (cursor.moveToFirst()) {
            do {
 
-               mEditTextEmail.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_EMAIL)));
-               mEditTextFirstName.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_FIRST_NAME)));
-               mEditTextLastName.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_LAST_NAME)));
+               String Email  = (cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_EMAIL)));
+               mEditTextEmail.setText(Email);
+               mHeaderTextViewEmail.setText(Email);
+
+               String mFirstName = (cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_FIRST_NAME)));
+               String mLastName  = (cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_LAST_NAME)));
+
+               mEditTextFirstName.setText(mFirstName);
+               mEditTextLastName.setText(mLastName);
+               String mFistAndLastName = mFirstName.concat(" ").concat(mLastName);
+
+               mHeaderTextViewName.setText(mFistAndLastName);
+
                mEditTextDob.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_DATE_OF_BIRTH)));
                String gender = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_GENDER));
                mEditTextMobile.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_PHONE)));
@@ -263,6 +287,7 @@ public class CandidateProfileActivity extends AppCompatActivity
                if (byteArray != null) {
                    Bitmap bp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                    mImageViewCandidateImage.setImageBitmap(bp);
+                   mHeaderImageViewProfileImage.setImageBitmap(bp);
                }
 
            } while (cursor.moveToNext());
