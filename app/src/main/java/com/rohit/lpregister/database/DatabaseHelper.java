@@ -9,9 +9,6 @@ import android.widget.Toast;
 
 import com.rohit.lpregister.model.Candidate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 
@@ -231,4 +228,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //
 //        return userList;
 //    }
+
+
+        public Cursor getCandidateProfile(String email) {
+
+
+
+        String[] columns = {
+                Constants.COLUMN_CANDIDATE_EMAIL,
+                Constants.COLUMN_CANDIDATE_FIRST_NAME,
+                Constants.COLUMN_CANDIDATE_LAST_NAME,
+                Constants.COLUMN_CANDIDATE_DATE_OF_BIRTH,
+                Constants.COLUMN_CANDIDATE_PHONE,
+                Constants.COLUMN_CANDIDATE_GENDER,
+                Constants.COLUMN_CANDIDATE_IMAGE
+        };
+
+            String selection = Constants.COLUMN_CANDIDATE_EMAIL + " = ?";
+
+            // selection arguments
+            String[] selectionArgs = {email};
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(Constants.TABLE_CANDIDATE, columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null);
+
+        return cursor;
+    }
 }

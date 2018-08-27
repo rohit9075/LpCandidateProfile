@@ -1,6 +1,8 @@
 package com.rohit.lpregister.activity;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -12,17 +14,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.rohit.lpregister.R;
+import com.rohit.lpregister.database.Constants;
 import com.rohit.lpregister.database.DatabaseHelper;
+import com.rohit.lpregister.model.Candidate;
+
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CandidateProfileActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener, RadioGroup.OnCheckedChangeListener,
+        CompoundButton.OnCheckedChangeListener{
 
     private EditText mEditTextFirstName,mEditTextLastName,mEditTextEmail,mEditTextMobile,mEditTextDob;
 
@@ -30,7 +40,13 @@ public class CandidateProfileActivity extends AppCompatActivity
 
     private RadioGroup mRadioGroupGender;
     // RadioButton object Declaration.
-    private RadioButton mRadioButton;
+    private RadioButton mRadioButton , mRadioButtonMale, mRatioButtonFemale;
+
+
+    // Switch referenceVariable
+    private Switch mEditUpdateSwitch;
+
+    private DatabaseHelper mDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +69,8 @@ public class CandidateProfileActivity extends AppCompatActivity
         clickListener(); // clickListener(); method call
 
         initObject(); // initObject method call
+
+        getCandidateDataFromDb();
     }
 
 
@@ -62,7 +80,7 @@ public class CandidateProfileActivity extends AppCompatActivity
 
     private void clickListener() {
 
-
+     mEditUpdateSwitch.setOnCheckedChangeListener(this);
 
     }
 
@@ -81,12 +99,17 @@ public class CandidateProfileActivity extends AppCompatActivity
 
         mRadioGroupGender = findViewById(R.id.radioGroup_update_gender);
 
+        mRadioButtonMale = findViewById(R.id.radioButton_update_male);
+        mRatioButtonFemale = findViewById(R.id.radioButton_update_female);
+
+        mEditUpdateSwitch = findViewById(R.id.toggle_editCandidate);
+
 
     }
 
     public void initObject(){
 
-
+      mDatabaseHelper = new DatabaseHelper(this);
 
     }
 
@@ -154,4 +177,88 @@ public class CandidateProfileActivity extends AppCompatActivity
     public void onClick(View v) {
 
     }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+        // getting the checked button id.
+        mRadioButton = group.findViewById(checkedId);
+    }
+
+
+    /**
+     * getData() method definition
+     */
+    public void getData(){
+
+
+        if (mRadioGroupGender != null) {
+
+            String mRegisterGender = mRadioButton.getText().toString().trim();
+        }
+
+    }
+
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (buttonView.getId() == R.id.toggle_editCandidate){
+
+            if (isChecked){
+                enableEditText();
+            }
+            else {
+
+//                updateCandidateProfile();
+
+            }
+        }
+    }
+
+
+    public void enableEditText(){
+
+        mEditTextFirstName.setEnabled(true);
+        mEditTextLastName.setEnabled(true);
+        mEditTextDob.setEnabled(true);
+        mEditTextMobile.setEnabled(true);
+        mRatioButtonFemale.setClickable(true);
+        mRadioButtonMale.setClickable(true);
+
+    }
+
+    public void disableEditText(){
+
+        mEditTextFirstName.setEnabled(false);
+        mEditTextLastName.setEnabled(false);
+        mEditTextDob.setEnabled(false);
+        mEditTextMobile.setEnabled(false);
+
+        mRatioButtonFemale.setClickable(false);
+        mRadioButtonMale.setClickable(false);
+
+    }
+
+   public void getCandidateDataFromDb() {
+
+       Cursor cursor = mDatabaseHelper.getCandidateProfile("rohit9075@gmail.com");
+
+       if (cursor.moveToFirst()) {
+           do {
+
+               mEditTextEmail.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_EMAIL)));
+               mEditTextFirstName.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_FIRST_NAME)));
+               mEditTextLastName.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_LAST_NAME)));
+               mEditTextDob.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_DATE_OF_BIRTH)));
+//               mRadioGroupGender.set(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_DATE_OF_BIRTH)));
+               mEditTextMobile.setText(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CANDIDATE_PHONE)));
+
+
+
+           } while (cursor.moveToNext());
+
+       }
+   }
+
+
 }
